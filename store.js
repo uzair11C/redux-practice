@@ -2,7 +2,6 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import counterReducer from "./features/slices/counterSlice";
 import usersReducer from "./features/slices/fetchUsersSlice";
 import resourcesReducer from "./features/slices/fetchResSlice";
-import storage from "redux-persist/lib/storage";
 
 // const persistConfig = {
 //     key: 'root',

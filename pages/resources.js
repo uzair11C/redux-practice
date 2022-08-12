@@ -1,12 +1,27 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
-import {Button, Container, Box, Table, TableBody, TableCell, TableContainer, TableFooter, TablePagination, TableHead, TableRow, Paper, IconButton} from '@mui/material';
-import { FirstPageIcon, KeyboardArrowLeft, KeyboardArrowRight, LastPageIcon} from '@mui/icons-material'
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
 import { useSelector, useDispatch } from 'react-redux'
 import { getAllResources } from '../features/slices/fetchResSlice';
 
-export  function TablePaginationActions(props) {
+function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
@@ -75,8 +90,12 @@ export default function CustomPaginationActionsTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    const allresources = useSelector((state) => state.allReducers.getresources.resources)
-    const dispatch = useDispatch()
+  const allresources = useSelector((state) => state.allReducers.getresources.resources)
+
+  const dispatch = useDispatch()
+
+  // Avoid a layout jump when reaching the last page with empty rows.
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -87,81 +106,114 @@ export default function CustomPaginationActionsTable() {
     setPage(0);
   };
 
-   console.log(allresources)
+  // const [resource1, setResource1] = React.useState([])
+  // const [resource2, setResource2] = React.useState([])
+
+  // const fetchResource1 = async () =>
+  // {
+  //   const res = await axios.get('https://reqres.in/api/unknown', {
+  //     params: {
+  //       page: '1',
+  //     }
+  //   })
+
+  //   setResource1(res.data.data)
+  // }
+
+  // const fetchResource2 = async () =>
+  // {
+  //   const res = await axios.get('https://reqres.in/api/unknown', {
+  //     params: {
+  //       page: '2',
+  //     }
+  //   })
+  //   setResource2(res.data.data)
+  // }
+
+  // React.useEffect(()=>
+  // {
+  //   fetchResource1()
+  //   fetchResource2()
+  // },[])
+
+
+  // const resources = [...resource1, ...resource2]
+
+  // console.log(resources.map(res=>(res.name)))
 
   const rows = allresources.map(resource =>(
     createData(resource.id, resource.name, resource.year,resource.color,resource.pantone_value))
     ).sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
     const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - resources.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - allresources.length) : 0;
 
   return (
-        <Container maxWith='md' sx={{mb:'20px',mt:'30px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center' }}>
-            <Button variant='contained' color='warning' onClick={()=> {dispatch(getAllResources())}}>Get Resources</Button>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{fontWeight:'bold'}}>ID</TableCell>
-                            <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Name</TableCell>
-                            <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Year</TableCell>
-                            <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Color</TableCell>
-                            <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Pantone Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {(rowsPerPage > 0
-                        ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        : rows
-                    ).map((row) => (
-                        <TableRow key={row.id}>
-                        <TableCell component="th" scope="row">
-                            {row.id}
-                        </TableCell>
-                        <TableCell style={{ width: 160 }} align="right">
-                            {row.name}
-                        </TableCell>
-                        <TableCell style={{ width: 160 }} align="right">
-                            {row.year}
-                        </TableCell>
-                        <TableCell style={{ width: 160, background:row.color }} align="right">
-                            {row.color}
-                        </TableCell>
-                        <TableCell style={{ width: 160 }} align="right">
-                            {row.pantone_value}
-                        </TableCell>
-                        </TableRow>
-                    ))}
+    <Container maxWidth='md' sx={{padding:'20px',mb:'20px',mt:'30px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center' }}>
+      <Button variant='contained' color='warning' sx={{mb:'20px'}} onClick={()=>{dispatch(getAllResources())}}>Get Resources</Button>
+        <TableContainer sx={{backgroundColor:'#c0d2f0',}} component={Paper}>
+          <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+            <TableHead>
+                <TableRow>
+                    <TableCell sx={{fontWeight:'bold'}}>ID</TableCell>
+                    <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Name</TableCell>
+                    <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Year</TableCell>
+                    <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Color</TableCell>
+                    <TableCell sx={{fontWeight:'bold',textAlign:'center'}}>Pantone Value</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                : rows
+              ).map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell component="th" scope="row">
+                    {row.id}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="right">
+                    {row.name}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="right">
+                    {row.year}
+                  </TableCell>
+                  <TableCell style={{ width: 160, background:row.color }} align="right">
+                    {row.color}
+                  </TableCell>
+                  <TableCell style={{ width: 160 }} align="right">
+                    {row.pantone_value}
+                  </TableCell>
+                </TableRow>
+              ))}
 
-                    {emptyRows > 0 && (
-                        <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                        </TableRow>
-                    )}
-                    </TableBody>
-                    <TableFooter>
-                    <TableRow>
-                        <TablePagination
-                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                        colSpan={3}
-                        count={rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                            inputProps: {
-                            'aria-label': 'rows per page',
-                            },
-                            native: true,
-                        }}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                        />
-                    </TableRow>
-                    </TableFooter>
-                </Table>
-                </TableContainer>
-        </Container>
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                  colSpan={3}
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      'aria-label': 'rows per page',
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+    </Container>
   );
 }
